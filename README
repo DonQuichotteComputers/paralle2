@@ -1,0 +1,50 @@
+Pseudo Eternity II solver under Parallella !
+
+Demo with a 10x10 subproblem with 16 cores running in parallel.
+
+A single eCore       reaches   5 million nodes per second, that's 81 Mn/s in parallel for 4.7 W, or 17.2 Mn/s/W :)
+A single ARM core    reaches   6 million nodes per second.
+My high-end computer reaches 130 million nodes per second with a single core and heavy optimizations, but it consumes 72 W: < 2 Mn/s/W :/
+An octo-core ARM     reaches 150 million nodes per second for approximately 10 watts.
+
+To my knowledge, Parallella is today the most energy-efficient platform for this highly recursive task...
+although this task does *not* use any float !
+
+***
+
+How to run the assembly demo under a 16-core Parallella:
+./buildasm.sh e2d
+time ./run.sh e2d
+
+***
+
+How to LEARN Epiphany assembly applied to recursive functions and an exclusive usage of the integer mode.
+
+  - The docs are your best friends first, especially the architecture manual.
+  - Some Parallella examples may help you... matmul, fft, notzed's topics...
+  - Rather get the ESDK 2015.1 for your regular x86_64 Linux - won't work with 2016.3.1, and probably too slow on Parallella.
+  - Read and compile recurse.c:
+    ./recurse.sh
+  
+  - Run:
+    e-run --trace-file recurse -t recurse.elf
+    => recurse is a 48 Mb file
+  
+  - Read and compile asm_recurse$1.c ($1 = nothing or 2 or 3 or 4):
+    ./asm_recurse.sh $1
+  
+  - Run:
+    e-run --trace-file asm_recurse -t recurse.elf
+    => asm_recurse is a 15 Mb file
+    e-run --trace-file asm_recurse4 -t recurse4.elf
+    => asm_recurse4 is a 15 Mb file
+
+  Read the C and S source files to get some info, and eventually the topics 
+  'Assembly class' and 'Assembly snippets' under the Parallella forum.
+  
+***
+
+Tested under a 16-core Kickstarter model with Zynq 7020, 'headless' configuration, SDK 2015.1.
+If you have something different like a 64-core, you may adapt the sources (CORE_N at least): src/e2d.c and src/e_e2d.c
+If you use SDK 2016.3.1 you'll get some compilation errors that are easy to fix -- the prefix '_' is valid for one SDK, not the other.
+But I don't know if it runs smoothly on this newer SDK.
